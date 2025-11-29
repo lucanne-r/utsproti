@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Rekomendasi Menu Sehat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f8e1ff 0%, #ffe1f8 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #9c27b0 0%, #e91e63 100%);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        
+        header p {
+            margin: 10px 0 0;
+            font-size: 1.2em;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .tab-btn {
+            background: white;
+            color: #9c27b0;
+            border: 2px solid #9c27b0;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn:hover, .tab-btn.active {
+            background: #9c27b0;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #9c27b0;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            border-color: #e91e63;
+            outline: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #e91e63 0%, #f06292 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: background 0.3s;
+            width: 100%;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #c2185b 0%, #e91e63 100%);
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+            border-left: 5px solid #e91e63;
+            border-radius: 8px;
+        }
+        
+        .result h3 {
+            color: #9c27b0;
+            margin-bottom: 15px;
+        }
+        
+        .result-item {
+            margin-bottom: 10px;
+        }
+        
+        .result-label {
+            font-weight: bold;
+            color: #9c27b0;
+        }
+        
+        .result-value {
+            color: #e91e63;
+            font-weight: bold;
+        }
+        
+        .workflow-step {
+            display: flex;
+            margin-bottom: 25px;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #9c27b0 0%, #e91e63 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-title {
+            font-weight: bold;
+            color: #9c27b0;
+            margin-bottom: 5px;
+        }
+        
+        .step-description {
+            color: #555;
+        }
+        
+        .flowchart-step {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            border-left: 5px solid #9c27b0;
+        }
+        
+        .flowchart-connector {
+            width: 2px;
+            height: 20px;
+            background: #9c27b0;
+            margin: 0 auto;
+        }
+        
+        .model-card {
+            background: linear-gradient(135deg, #e1f5fe 0%, #fce4ec 100%);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-top: 5px solid #2196f3;
+        }
+        
+        .model-card h3 {
+            color: #9c27b0;
+            margin-bottom: 10px;
+        }
+        
+        .model-metrics {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+        }
+        
+        .metric {
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-weight: bold;
+            color: #e91e63;
+            font-size: 1.2em;
+        }
+        
+        .metric-label {
+            font-size: 0.8em;
+            color: #666;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .tab-btn {
+                width: 100%;
+                max-width: 300px;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Dashboard Sistem Rekomendasi Menu Sehat</h1>
+            <p>Platform lengkap untuk analisis proyek Machine Learning</p>
+        </header>
+        
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="home">Beranda Utama</button>
+            <button class="tab-btn" data-tab="simulation">Beranda (Simulasi)</button>
+            <button class="tab-btn" data-tab="workflow">Alur Kerja Sistem</button>
+            <button class="tab-btn" data-tab="flowchart">Flowchart Proses</button>
+            <button class="tab-btn" data-tab="ml">Model Machine Learning</button>
+        </div>
+        
+        <!-- Beranda Utama -->
+        <div id="home" class="tab-content active">
+            <h2>Selamat Datang di Dashboard Sistem Rekomendasi Menu Sehat</h2>
+            <p>Dashboard ini menyediakan berbagai informasi tentang sistem rekomendasi menu sehat berbasis Machine Learning.</p>
+            
+            <div class="model-card">
+                <h3>Fitur Utama</h3>
+                <ul>
+                    <li>Simulasi sistem rekomendasi dengan input data pengguna</li>
+                    <li>Penjelasan alur kerja sistem secara detail</li>
+                    <li>Visualisasi proses dalam bentuk flowchart</li>
+                    <li>Informasi tentang model Machine Learning yang digunakan</li>
+                </ul>
+            </div>
+            
+            <div class="model-card">
+                <h3>Cara Menggunakan</h3>
+                <p>Gunakan menu navigasi di atas untuk menjelajahi berbagai bagian dashboard:</p>
+                <ol>
+                    <li><strong>Beranda (Simulasi)</strong> - Jalankan simulasi sistem rekomendasi</li>
+                    <li><strong>Alur Kerja Sistem</strong> - Pelajari proses kerja sistem</li>
+                    <li><strong>Flowchart Proses</strong> - Lihat diagram alir sistem</li>
+                    <li><strong>Model Machine Learning</strong> - Pelajari algoritma yang digunakan</li>
+                </ol>
+            </div>
+        </div>
+        
+        <!-- Beranda (Simulasi) -->
+        <div id="simulation" class="tab-content">
+            <h2>Beranda (Simulasi) - ANALISIS PROYEK ML</h2>
+            <p>Jalankan simulasi sistem rekomendasi dengan input data pengguna.</p>
+            
+            <div class="form-group">
+                <label for="age">Usia (tahun)</label>
+                <input type="number" id="age" placeholder="Contoh: 25" min="10" max="100">
+            </div>
+            
+            <div class="form-group">
+                <label for="weight">Berat Badan (kg)</label>
+                <input type="number" id="weight" placeholder="Contoh: 60" min="30" max="200">
+            </div>
+            
+            <div class="form-group">
+                <label for="height">Tinggi Badan (cm)</label>
+                <input type="number" id="height" placeholder="Contoh: 165" min="100" max="250">
+            </div>
+            
+            <div class="form-group">
+                <label for="gender">Jenis Kelamin</label>
+                <select id="gender">
+                    <option value="male">Laki-laki</option>
+                    <option value="female">Perempuan</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="preference">Preferensi Makanan</label>
+                <select id="preference">
+                    <option value="vegan">Vegan</option>
+                    <option value="vegetarian">Vegetarian</option>
+                    <option value="omnivore">Omnivore</option>
+                    <option value="keto">Keto</option>
+                    <option value="paleo">Paleo</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="activity">Tingkat Aktivitas</label>
+                <select id="activity">
+                    <option value="sedentary">Sedentary</option>
+                    <option value="light">Light</option>
+                    <option value="moderate">Moderate</option>
+                    <option value="active">Active</option>
+                    <option value="very_active">Very Active</option>
+                </select>
+            </div>
+            
+            <button class="btn-primary" id="simulateBtn">Jalankan Simulasi</button>
+            
+            <div class="result" id="simulationResult" style="display: none;">
+                <h3>Hasil Simulasi</h3>
+                <div class="result-item">
+                    <span class="result-label">BMI:</span>
+                    <span class="result-value" id="resultBmi">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Kategori BMI:</span>
+                    <span class="result-value" id="resultBmiCategory">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Kebutuhan Kalori:</span>
+                    <span class="result-value" id="resultCalories">-</span> kcal
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Kebutuhan Protein:</span>
+                    <span class="result-value" id="resultProtein">-</span> g
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Menu Rekomendasi:</span>
+                    <span class="result-value" id="resultMenu">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Algoritma yang Digunakan:</span>
+                    <span class="result-value" id="resultAlgorithm">-</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Alur Kerja Sistem -->
+        <div id="workflow" class="tab-content">
+            <h2>Alur Kerja Sistem</h2>
+            <p>Berikut adalah alur kerja sistem rekomendasi menu sehat dari awal hingga akhir.</p>
+            
+            <div class="workflow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <div class="step-title">Input Data Pengguna</div>
+                    <div class="step-description">Sistem menerima data pengguna seperti usia, berat badan, tinggi badan, jenis kelamin, preferensi makanan, dan tingkat aktivitas.</div>
+                </div>
+            </div>
+            
+            <div class="workflow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <div class="step-title">Preprocessing Data</div>
+                    <div class="step-description">Data diolah untuk menghitung BMI, kebutuhan kalori, protein, karbohidrat, dan lemak berdasarkan rumus nutrisi yang telah ditetapkan.</div>
+                </div>
+            </div>
+            
+            <div class="workflow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <div class="step-title">Pemilihan Model ML</div>
+                    <div class="step-description">Sistem memilih algoritma yang sesuai berdasarkan jenis data (KNN untuk data numerik, Naive Bayes untuk data kategorikal).</div>
+                </div>
+            </div>
+            
+            <div class="workflow-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <div class="step-title">Prediksi dan Rekomendasi</div>
+                    <div class="step-description">Model ML menghasilkan rekomendasi menu yang dipersonalisasi berdasarkan data pengguna dan preferensi makanan.</div>
+                </div>
+            </div>
+            
+            <div class="workflow-step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <div class="step-title">Output dan Feedback</div>
+                    <div class="step-description">Sistem menampilkan rekomendasi menu dengan detail nutrisi dan menyimpan data untuk perbaikan model di masa depan.</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Flowchart Proses -->
+        <div id="flowchart" class="tab-content">
+            <h2>Flowchart Proses</h2>
+            <p>Visualisasi proses sistem dalam bentuk flowchart.</p>
+            
+            <div class="flowchart-step">
+                <strong>Input Data Pengguna</strong>
+                <p>Menerima data usia, berat, tinggi, preferensi, dan aktivitas</p>
+            </div>
+            
+            <div class="flowchart-connector"></div>
+            
+            <div class="flowchart-step">
+                <strong>Preprocessing Data</strong>
+                <p>Hitung BMI, kebutuhan kalori, dan nutrisi lainnya</p>
+            </div>
+            
+            <div class="flowchart-connector"></div>
+            
+            <div class="flowchart-step">
+                <strong>Pemilihan Model ML</strong>
+                <p>KNN untuk data numerik, Naive Bayes untuk data kategorikal</p>
+            </div>
+            
+            <div class="flowchart-connector"></div>
+            
+            <div class="flowchart-step">
+                <strong>Prediksi Menu</strong>
+                <p>Hasilkan rekomendasi berdasarkan kemiripan pengguna</p>
+            </div>
+            
+            <div class="flowchart-connector"></div>
+            
+            <div class="flowchart-step">
+                <strong>Output Rekomendasi</strong>
+                <p>Tampilkan menu dengan detail nutrisi</p>
+            </div>
+        </div>
+        
+        <!-- Model Machine Learning -->
+        <div id="ml" class="tab-content">
+            <h2>Model Machine Learning</h2>
+            <p>Informasi tentang model Machine Learning yang digunakan dalam sistem.</p>
+            
+            <div class="model-card">
+                <h3>K-Nearest Neighbors (KNN)</h3>
+                <p>Algoritma yang mencari kemiripan dengan pengguna lain berdasarkan fitur numerik seperti BMI, usia, dan kebutuhan nutrisi.</p>
+                
+                <div class="model-metrics">
+                    <div class="metric">
+                        <div class="metric-value">87%</div>
+                        <div class="metric-label">Akurasi</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">5</div>
+                        <div class="metric-label">Nilai K</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">120s</div>
+                        <div class="metric-label">Training</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="model-card">
+                <h3>Naive Bayes</h3>
+                <p>Algoritma klasifikasi probabilistik yang cocok untuk data kategorikal seperti preferensi makanan dan tingkat aktivitas.</p>
+                
+                <div class="model-metrics">
+                    <div class="metric">
+                        <div class="metric-value">82%</div>
+                        <div class="metric-label">Akurasi</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">Multinomial</div>
+                        <div class="metric-label">Distribusi</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">45s</div>
+                        <div class="metric-label">Training</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="model-card">
+                <h3>Decision Tree</h3>
+                <p>Algoritma yang membangun pohon keputusan untuk mengklasifikasikan jenis menu berdasarkan karakteristik pengguna.</p>
+                
+                <div class="model-metrics">
+                    <div class="metric">
+                        <div class="metric-value">79%</div>
+                        <div class="metric-label">Akurasi</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">10</div>
+                        <div class="metric-label">Kedalaman</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">85s</div>
+                        <div class="metric-label">Training</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>&copy; 2025 Dashboard Sistem Rekomendasi Menu Sehat. Dibuat untuk analisis proyek Machine Learning oleh Rindu Yonavita Sembiring-243303611264.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Data menu untuk setiap kategori
+        var menuData = {
+            vegan: [
+                {name: "Buddha Bowl dengan Quinoa", calories: 450, protein: 15, carbs: 60, fat: 18},
+                {name: "Smoothie Bowl Tropis", calories: 380, protein: 12, carbs: 65, fat: 10}
+            ],
+            vegetarian: [
+                {name: "Frittata Sayuran", calories: 480, protein: 25, carbs: 20, fat: 32},
+                {name: "Pasta dengan Saus Kacang", calories: 520, protein: 18, carbs: 70, fat: 20}
+            ],
+            omnivore: [
+                {name: "Ayam Panggang dengan Ubi", calories: 550, protein: 35, carbs: 45, fat: 25},
+                {name: "Salmon dengan Quinoa", calories: 580, protein: 38, carbs: 40, fat: 30}
+            ],
+            keto: [
+                {name: "Salmon dengan Alpukat", calories: 600, protein: 35, carbs: 8, fat: 48},
+                {name: "Daging Sapi dengan Sayuran", calories: 650, protein: 40, carbs: 10, fat: 50}
+            ],
+            paleo: [
+                {name: "Daging Panggang dengan Ubi", calories: 580, protein: 38, carbs: 35, fat: 32},
+                {name: "Ikan Bakar dengan Salad", calories: 520, protein: 32, carbs: 20, fat: 35}
+            ]
+        };
+
+        // Fungsi untuk menghitung BMI
+        function calculateBMI(weight, height) {
+            var heightInMeters = height / 100;
+            return (weight / (heightInMeters * heightInMeters)).toFixed(1);
+        }
+
+        // Fungsi untuk menentukan kategori BMI
+        function getBMICategory(bmi) {
+            if (bmi < 18.5) return "Underweight";
+            if (bmi < 25) return "Normal";
+            if (bmi < 30) return "Overweight";
+            return "Obesity";
+        }
+
+        // Fungsi untuk menghitung kebutuhan kalori harian
+        function calculateDailyCalories(age, weight, height, gender, activityLevel) {
+            var activityFactors = {
+                sedentary: 1.2,
+                light: 1.375,
+                moderate: 1.55,
+                active: 1.725,
+                very_active: 1.9
+            };
+
+            var bmr;
+            if (gender === "male") {
+                bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+            } else {
+                bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+            }
+
+            return Math.round(bmr * activityFactors[activityLevel]);
+        }
+
+        // Fungsi untuk menghitung kebutuhan protein harian
+        function calculateDailyProtein(weight, activityLevel) {
+            var proteinFactors = {
+                sedentary: 0.8,
+                light: 1.0,
+                moderate: 1.2,
+                active: 1.5,
+                very_active: 1.7
+            };
+
+            return Math.round(weight * proteinFactors[activityLevel]);
+        }
+
+        // Fungsi untuk memilih menu secara acak berdasarkan preferensi
+        function getRandomMenu(preference) {
+            var menus = menuData[preference];
+            var randomIndex = Math.floor(Math.random() * menus.length);
+            return menus[randomIndex];
+        }
+
+        // Fungsi untuk menentukan algoritma yang digunakan
+        function getAlgorithm(preference, activity) {
+            if (preference === "vegan" || preference === "vegetarian") {
+                return "Naive Bayes (karena data kategorikal dominan)";
+            } else if (activity === "sedentary" || activity === "light") {
+                return "Decision Tree (karena klasifikasi sederhana)";
+            } else {
+                return "K-Nearest Neighbors (karena data numerik dominan)";
+            }
+        }
+
+        // Event listener untuk tombol simulasi
+        document.getElementById('simulateBtn').addEventListener('click', function() {
+            var age = parseInt(document.getElementById('age').value) || 25;
+            var weight = parseInt(document.getElementById('weight').value) || 60;
+            var height = parseInt(document.getElementById('height').value) || 165;
+            var gender = document.getElementById('gender').value;
+            var preference = document.getElementById('preference').value;
+            var activity = document.getElementById('activity').value;
+
+            if (!age || !weight || !height) {
+                alert("Harap isi usia, berat badan, dan tinggi badan!");
+                return;
+            }
+
+            var bmi = calculateBMI(weight, height);
+            var bmiCategory = getBMICategory(bmi);
+            var calculatedCalories = calculateDailyCalories(age, weight, height, gender, activity);
+            var calculatedProtein = calculateDailyProtein(weight, activity);
+            var recommendedMenu = getRandomMenu(preference);
+            var algorithm = getAlgorithm(preference, activity);
+
+            document.getElementById('resultBmi').textContent = bmi;
+            document.getElementById('resultBmiCategory').textContent = bmiCategory;
+            document.getElementById('resultCalories').textContent = calculatedCalories;
+            document.getElementById('resultProtein').textContent = calculatedProtein;
+            document.getElementById('resultMenu').textContent = recommendedMenu.name;
+            document.getElementById('resultAlgorithm').textContent = algorithm;
+
+            document.getElementById('simulationResult').style.display = 'block';
+        });
+
+        // Navigasi antar tab
+        var tabButtons = document.querySelectorAll('.tab-btn');
+        for (var i = 0; i < tabButtons.length; i++) {
+            tabButtons[i].addEventListener('click', function() {
+                var tabId = this.getAttribute('data-tab');
+                
+                // Sembunyikan semua tab
+                var tabContents = document.querySelectorAll('.tab-content');
+                for (var j = 0; j < tabContents.length; j++) {
+                    tabContents[j].classList.remove('active');
+                }
+                
+                // Tampilkan tab yang dipilih
+                document.getElementById(tabId).classList.add('active');
+                
+                // Update status aktif pada tombol tab
+                for (var k = 0; k < tabButtons.length; k++) {
+                    tabButtons[k].classList.remove('active');
+                }
+                
+                this.classList.add('active');
+            });
+        }
+    </script>
+</body>
+</html>
